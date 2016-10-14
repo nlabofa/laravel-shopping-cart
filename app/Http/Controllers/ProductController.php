@@ -64,9 +64,8 @@ class ProductController extends Controller
         if (!Session::has('cart')) {
             return view('shop.shopping-cart');
         }
-        $oldCart = Session::get('cart');
-        $cart = new Cart($oldCart);
-        return view('shop.shopping-cart', ['products' => $cart->items, 'totalPrice' => $cart->totalPrice]);
+        $oldcart = Session::get('cart');
+        return view('shop.shopping-cart', ['products' => $oldcart->items, 'totalPrice' => $oldcart->totalPrice]);
     }
 
     public function getCheckout()
@@ -75,8 +74,7 @@ class ProductController extends Controller
             return view('shop.shopping-cart');
         }
         $oldCart = Session::get('cart');
-        $cart = new Cart($oldCart);
-        $total = $cart->totalPrice;
+        $total = $oldCart->totalPrice;
         return view('shop.checkout', ['total' => $total]);
     }
 
@@ -88,12 +86,12 @@ class ProductController extends Controller
         $oldCart = Session::get('cart');
         $cart = new Cart($oldCart);
 
-        Stripe::setApiKey('');
+        Stripe::setApiKey('sk_test_DBlsbwPkCirLT9WbWAziukrm');
         try {
             $charge = Charge::create(array(
                 "amount" => $cart->totalPrice * 100,
                 "currency" => "usd",
-                "source" => $request->input('stripeToken'), // obtained with Stripe.js
+                "source" => $request->input('stripeToken'), 
                 "description" => "Test Charge"
             ));
             $order = new Order();
